@@ -1,0 +1,46 @@
+service: your-service-name
+
+variablesResolutionMode: 20210219
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  memorySize: 1024
+  region: us-east-2
+  stage: ${opt:stage, 'dev'}
+  timeout: 30
+  logRetentionInDays: 7
+  deploymentBucket:
+    name: lambda.deploys.${opt:stage, 'dev'}
+    maxPreviousDeploymentArtifacts: 3
+  apiGateway:
+    binaryMediaTypes:
+      - '*/*'
+  lambdaHashingVersion: 20201221
+
+functions:
+  generatePDF:
+    name: pdf-${opt:stage, 'dev'}
+    handler: functions/generatePDF.handler
+    environment:
+      SECRET_VARIABLE_A: ${self:custom.dotenvVars.SECRET_VARIABLE_A}
+      SECRET_VARIABLE_B: ${self:custom.dotenvVars.SECRET_VARIABLE_B}
+      LAMBDA_ENV: ${opt:stage, 'dev'}
+    events:
+    - http:
+        path: /api/pdf
+        method: post
+        cors: true
+
+plugins: 
+  - serverless-offline
+  - serverless-webpack
+
+package:
+  individually: true
+
+custom:
+  dotenvVars: ${file(configs.js)}
+  webpack:
+    webpackConfig: './webpack.config.js'
+    includeModules: true
