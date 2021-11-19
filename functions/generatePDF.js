@@ -1,6 +1,13 @@
 import React from "react";
 import { Font, renderToStream } from "@react-pdf/renderer";
+import AWS from 'aws-sdk';
 import AwesomePDF from "../components/AwesomePDF";
+
+// S3 configuration
+const s3 = new AWS.S3({
+  accessKeyId: process.env.PDF_ACCESS_KEY,
+  secretAccessKey: process.env.PDF_SECRET_KEY,
+});
 
 // Utils
 const base64ToJson = (base64) => {
@@ -73,6 +80,8 @@ const handler = async (event, context) => {
         pageTitle={pageTitle}
         awesomeVariableA={awesomeVariableA}
         awesomeVariableB={awesomeVariableB}
+        envVariableA={process.env.ENV_VARIABLE_A}
+        envVariableB={process.env.ENV_VARIABLE_B}
       />
     );
 
@@ -83,16 +92,25 @@ const handler = async (event, context) => {
     // Convert Stream to Buffer
     const buffer = await streamToBuffer(stream);
     console.log(`Rendered PDF in ${new Date() - started}ms`);
+
+    // Upload the pdf to S3 and send the URL
+    const uploadDate = new Date();
+    const result = await s3.upload({
+      Bucket: "temporary.pdfs",
+      ContentType: "application/pdf",
+      ACL: "public-read",
+      Key: fileName,
+      Body: buffer,
+    }).promise();
+    console.log(`Uploaded PDF in ${new Date() - uploadDate}ms`);
   
-    // Return your buffer PDF
+    // Redirect the user to the S3 bucket file URL
     return {
-      statusCode: 200,
+      statusCode: 301,
       headers: {
-        "Content-Type": "application/pdf",
+        "Location": result.Location,
         ...defaultHeaders
       },
-      isBase64Encoded : true,
-      body: buffer.toString('base64'),
     };
 
   } catch (error) {

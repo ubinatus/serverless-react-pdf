@@ -25,6 +25,8 @@ functions:
     environment:
       ENV_VARIABLE_A: ${self:custom.dotenvVars.ENV_VARIABLE_A}
       ENV_VARIABLE_B: ${self:custom.dotenvVars.ENV_VARIABLE_B}
+      PDF_ACCESS_KEY: ${self:custom.dotenvVars.PDF_ACCESS_KEY}
+      PDF_SECRET_KEY: ${self:custom.dotenvVars.PDF_SECRET_KEY}
       LAMBDA_ENV: ${opt:stage, 'dev'}
     events:
     - http:
