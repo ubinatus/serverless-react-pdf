@@ -11,13 +11,14 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*
-.env.dev
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.prod
+# environment variables commented for teaching purposes (DON'T DO IT ON PRODUCTION)
+# .env*
+# .env.dev
+# .env.local
+# .env.development.local
+# .env.test.local
+# .env.production.local
+# .env.prod
 
 # webpack
 .webpack/

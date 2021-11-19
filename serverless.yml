@@ -23,8 +23,8 @@ functions:
     name: pdf-${opt:stage, 'dev'}
     handler: functions/generatePDF.handler
     environment:
-      SECRET_VARIABLE_A: ${self:custom.dotenvVars.SECRET_VARIABLE_A}
-      SECRET_VARIABLE_B: ${self:custom.dotenvVars.SECRET_VARIABLE_B}
+      ENV_VARIABLE_A: ${self:custom.dotenvVars.ENV_VARIABLE_A}
+      ENV_VARIABLE_B: ${self:custom.dotenvVars.ENV_VARIABLE_B}
       LAMBDA_ENV: ${opt:stage, 'dev'}
     events:
     - http:
